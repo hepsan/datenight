@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Välj tid för dejten</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #ffe6f2;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            text-align: center;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #d63384;
+            margin-top: 0;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        input[type="datetime-local"] {
+            font-size: 1.2rem;
+            padding: 10px;
+            border: 2px solid #d63384;
+            border-radius: 8px;
+            outline: none;
+            margin-bottom: 20px;
+            font-family: inherit;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            background-color: #d63384;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #b52a6e;
+        }
+
+        #confirmation {
+            display: none;
+            margin-top: 20px;
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Vad roligt! 💖</h1>
+        <p>Välj vilket datum och vilken tid som passar dig bäst:</p>
+        
+        <input type="datetime-local" id="date-picker">
+        <br>
+        <button id="submit-btn">Boka in dejten!</button>
+        
+        <div id="confirmation">Perfekt! Vi ses då! 🎉</div>
+    </div>
+
+    <script>
+        const btnSubmit = document.getElementById('submit-btn');
+        const confirmation = document.getElementById('confirmation');
+        const datePicker = document.getElementById('date-picker');
+
+        btnSubmit.addEventListener('click', () => {
+            if(datePicker.value) {
+                // Byter ut texten och visar en bekräftelse när datumet är valt
+                confirmation.style.display = 'block';
+                btnSubmit.style.display = 'none';
+                datePicker.disabled = true;
+            } else {
+                alert("Välj ett datum och tid först!");
+            }
+        });
+    </script>
+
+</body>
+</html>
