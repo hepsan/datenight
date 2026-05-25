@@ -22,6 +22,8 @@
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
         }
 
         h1 {
@@ -35,6 +37,10 @@
             margin-bottom: 20px;
         }
 
+        form {
+            width: 100%;
+        }
+
         input[type="datetime-local"] {
             font-size: 1.2rem;
             padding: 10px;
@@ -43,6 +49,8 @@
             outline: none;
             margin-bottom: 20px;
             font-family: inherit;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         button {
@@ -61,14 +69,6 @@
         button:hover {
             background-color: #b52a6e;
         }
-
-        #confirmation {
-            display: none;
-            margin-top: 20px;
-            color: #4CAF50;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
     </style>
 </head>
 <body>
@@ -77,29 +77,17 @@
         <h1>Vad roligt! 💖</h1>
         <p>Välj vilket datum och vilken tid som passar dig bäst:</p>
         
-        <input type="datetime-local" id="date-picker">
-        <br>
-        <button id="submit-btn">Boka in dejten!</button>
-        
-        <div id="confirmation">Perfekt! Vi ses då! 🎉</div>
+        <form action="https://formsubmit.co/lehtinenjesper@outlook.com" method="POST">
+            <input type="hidden" name="_subject" value="Ny dejt inbokad! 💖">
+            <input type="hidden" name="_captcha" value="false">
+            
+            <input type="hidden" name="_next" value="https://hepsan.github.io/kalender.html"> 
+
+            <input type="datetime-local" name="Valt datum och tid" id="date-picker" required>
+            <br>
+            <button type="submit" id="submit-btn">Boka in dejten!</button>
+        </form>
     </div>
-
-    <script>
-        const btnSubmit = document.getElementById('submit-btn');
-        const confirmation = document.getElementById('confirmation');
-        const datePicker = document.getElementById('date-picker');
-
-        btnSubmit.addEventListener('click', () => {
-            if(datePicker.value) {
-                // Byter ut texten och visar en bekräftelse när datumet är valt
-                confirmation.style.display = 'block';
-                btnSubmit.style.display = 'none';
-                datePicker.disabled = true;
-            } else {
-                alert("Välj ett datum och tid först!");
-            }
-        });
-    </script>
 
 </body>
 </html>
