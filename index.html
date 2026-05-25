@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>En viktig fråga</title>
     <style>
         body {
@@ -18,42 +18,45 @@
         }
 
         img {
-            width: 300px;
+            width: 80%;
+            max-width: 300px;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         h1 {
             color: #d63384;
-            margin: 20px 0;
-            font-size: 2.5rem;
+            margin: 20px 10px;
+            font-size: clamp(1.8rem, 5vw, 2.5rem); /* Skalar automatiskt ner på mobilen */
             text-align: center;
         }
 
         .button-container {
             position: relative;
-            width: 300px;
+            width: 100%;
+            max-width: 350px;
             height: 100px;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-evenly;
             align-items: center;
         }
 
         button {
-            padding: 15px 40px;
-            font-size: 22px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
             font-weight: bold;
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            transition: background-color 0.2s;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            touch-action: manipulation; /* Stoppar ofrivillig inzoomning vid tryck på mobil */
         }
 
         #btn-yes {
             background-color: #4CAF50;
             color: white;
             z-index: 2;
+            transition: background-color 0.2s;
         }
 
         #btn-yes:hover {
@@ -63,8 +66,8 @@
         #btn-no {
             background-color: #f44336;
             color: white;
-            position: absolute;
-            right: 20px;
+            position: relative;
+            z-index: 3;
             transition: left 0.2s ease, top 0.2s ease;
         }
     </style>
@@ -83,34 +86,69 @@
     <script>
         const btnNo = document.getElementById('btn-no');
         const btnYes = document.getElementById('btn-yes');
+        let escapeCount = 0;
         let isAbsolute = false;
 
-        btnNo.addEventListener('mouseover', () => {
-            if (!isAbsolute) {
-                btnNo.style.position = 'fixed';
-                isAbsolute = true;
+        function moveNoButton(e) {
+            if (escapeCount < 2) {
+                // Stoppa standardbeteendet så inte skärmen scrollar/klickar fel
+                if(e && e.type === 'touchstart') e.preventDefault();
+
+                // Ändra till absolut positionering första gången så den kan röra sig fritt
+                if (!isAbsolute) {
+                    const rect = btnNo.getBoundingClientRect();
+                    btnNo.style.position = 'fixed';
+                    btnNo.style.left = rect.left + 'px';
+                    btnNo.style.top = rect.top + 'px';
+                    isAbsolute = true;
+                }
+
+                // Hämta storlekar
+                const buttonWidth = btnNo.offsetWidth;
+                const buttonHeight = btnNo.offsetHeight;
+                
+                // Räkna ut maxvärden för skärmen så knappen inte åker utanför
+                const maxX = window.innerWidth - buttonWidth - 20;
+                const maxY = window.innerHeight - buttonHeight - 20;
+                
+                // Generera en ny slumpmässig position
+                const newX = Math.max(10, Math.floor(Math.random() * maxX));
+                const newY = Math.max(10, Math.floor(Math.random() * maxY));
+                
+                // Flytta nej-knappen
+                btnNo.style.left = newX + 'px';
+                btnNo.style.top = newY + 'px';
+                
+                escapeCount++;
+
+            } else if (escapeCount === 2) {
+                if(e && e.type === 'touchstart') e.preventDefault();
+                
+                // Tredje försöket: Läs av var Nej-knappen är just nu
+                const noRect = btnNo.getBoundingClientRect();
+                
+                // Flytta Ja-knappen till Nej-knappens plats och gör den lika stor
+                btnYes.style.position = 'fixed';
+                btnYes.style.left = noRect.left + 'px';
+                btnYes.style.top = noRect.top + 'px';
+                btnYes.style.width = btnNo.offsetWidth + 'px';
+                btnYes.style.height = btnNo.offsetHeight + 'px';
+                
+                // Göm Nej-knappen helt
+                btnNo.style.display = 'none';
+                
+                escapeCount++;
             }
+        }
 
-            const yesRect = btnYes.getBoundingClientRect();
-            const noRect = btnNo.getBoundingClientRect();
-            
-            const targetX = yesRect.left + yesRect.width / 2;
-            const targetY = yesRect.top + yesRect.height / 2;
-            
-            const currentX = noRect.left + noRect.width / 2;
-            const currentY = noRect.top + noRect.height / 2;
-            
-            let newX = currentX + (targetX - currentX) * 0.4 + (Math.random() - 0.5) * 150;
-            let newY = currentY + (targetY - currentY) * 0.4 + (Math.random() - 0.5) * 150;
-            
-            newX = Math.max(10, Math.min(newX, window.innerWidth - noRect.width - 10));
-            newY = Math.max(10, Math.min(newY, window.innerHeight - noRect.height - 10));
-            
-            btnNo.style.left = newX + 'px';
-            btnNo.style.top = newY + 'px';
-        });
+        // Dator: När muspekaren hovrar över knappen
+        btnNo.addEventListener('mouseover', moveNoButton);
 
-        btnYes.addEventListener('mouseenter', () => {
+        // Mobil: När fingret rör knappen
+        btnNo.addEventListener('touchstart', moveNoButton);
+
+        // När användaren trycker på Ja-knappen
+        btnYes.addEventListener('click', () => {
             window.location.href = 'kalender.html';
         });
     </script>
